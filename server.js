@@ -11,3 +11,5 @@ server.get('/', (req, res) => {
 function logger(req, res, next) {}
 
 module.exports = server;
+
+server.listen(3000).json({'Listening on port 3000'})
