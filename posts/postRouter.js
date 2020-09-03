@@ -1,33 +1,44 @@
-const express = require('express');
+const express = require("express");
 
 const router = express.Router();
 
-const postDb = require('./postDb')
+const postDb = require("./postDb");
 
-router.get('/', (req, res) => {
+router.get("/", (req, res) => {
   // do your magic!
 });
 
-router.get('/:id', (req, res) => {
+router.get("/:id", (req, res) => {
   // do your magic!
 });
 
-router.delete('/:id', (req, res) => {
+router.delete("/:id", (req, res) => {
   // do your magic!
 });
 
-router.put('/:id', (req, res) => {
+router.put("/:id", (req, res) => {
   // do your magic!
 });
 
 // custom middleware
 
 function validatePostId(req, res, next) {
-  return function(req,res,next){
-    const id = req.params.id
-    postDb.getById(id)
-    .then(post)
-  }
+  return function (req, res, next) {
+    const id = req.params.id;
+    postDb
+      .getById(id)
+      .then((post) => {
+        if (post) {
+          next();
+        } else {
+          res.status(400).json({ message: "missing post data" });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).json({ message: "error 500" });
+      });
+  };
 }
 
 module.exports = router;
