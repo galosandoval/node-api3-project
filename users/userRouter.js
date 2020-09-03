@@ -6,6 +6,7 @@ const userDB = require("./userDb");
 const postDB = require("../posts/postDb");
 
 router.post("/", validateUser, (req, res) => {
+  const user = req.body;
   userDB
     .insert(req.body)
     .then((user) => {
@@ -17,19 +18,17 @@ router.post("/", validateUser, (req, res) => {
     });
 });
 
-// still not working
 router.post("/:id/posts", validateUserId, validatePost, (req, res) => {
-  console.log("herers the req.body", req.body);
-  postDB
-    .insert(req.body)
-    .then((post) => {
-      res.status(201).json(post);
-    })
-    .catch((error) => {
-      console.log("herers the req.body", req.body);
-      console.log("heres the error", error);
-      res.status(500).json({ message: "oh no" });
-    });
+  const post = req.body
+  postDB.insert(post)
+  .then(post => {
+    res.status(201).json(post)
+  })
+  .catch(error => {
+    console.log(error)
+    res.status(500).json({error: 'Error adding a post'})
+  })
+
 });
 
 router.get("/", (req, res) => {
@@ -74,7 +73,7 @@ router.delete("/:id", validateUserId, (req, res) => {
   userDB
     .remove(id)
     .then((bye) => {
-      res.status(200).json({ message: "successfully deleted post" });
+      res.status(204).json({ message: "successfully deleted post" });
     })
     .catch((error) => {
       console.log("hers the error", error);
@@ -118,21 +117,27 @@ function validateUserId(req, res, next) {
 
 function validateUser(req, res, next) {
   const user = req.body;
-  if (!user.name || !user) {
-    res.status(400).json({ message: "missing user data" }).end();
-  } else {
-    next();
+  if (!user.name) {
+    res.status(400).json({ error: "missing user name" }).end();
   }
+  if (typeof name !== "string") {
+    res.status(400).json({ error: "Name must be a string" });
+  }
+  req.body = { name };
+  next();
 }
 
 function validatePost(req, res, next) {
-  const user = req.body;
-  // const id = req.params.id;
-  if (!user.text || !user.user_id) {
-    res.status(400).json({ message: "missing user data" }).end();
-  } else {
-    next();
+  const { id: user_id } = req.params;
+  const { text } = req.body; // same as req.body.text
+  if (!text) {
+    res.status(400).json({ message: "missing user text" });
   }
+  if (!req.body) {
+    res.status(400).json({ message: "missing user body data" });
+  }
+  req.body = {user_id, text}
+  next()
 }
 
 module.exports = router;
