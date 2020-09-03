@@ -5,26 +5,54 @@ const router = express.Router();
 const postDb = require("./postDb");
 
 router.get("/", (req, res) => {
-  postDb.get(req.query)
-  .then(post => {
-    res.status(200).json(post)
+  postDb
+    .get(req.query)
+    .then((post) => {
+      res.status(200).json(post);
+    })
+    .catch((error) => {
+      console.log("Heres the error", error);
+      res.status(500).json({ message: "oh no" });
+    });
+});
+
+router.get("/:id", validatePostId(), (req, res) => {
+  const id = req.params.id;
+  postDb
+    .getById(id)
+    .then((post) => {
+      res.status(200).json(post);
+    })
+    .catch((error) => {
+      console.log("Heres the error", error);
+      res.status(500).json({ message: "oh no" });
+    });
+});
+
+router.delete("/:id", validatePostId(), (req, res) => {
+  const id = req.params.id;
+  postDb
+    .remove(id)
+    .then((post) => {
+      res.status(200).json({ message: "successfully deleted post" });
+    })
+    .catch((error) => {
+      console.log("Heres the error", error);
+      res.status(500).json({ message: "oh no" });
+    });
+});
+
+router.put("/:id", validatePostId(), (req, res) => {
+  const id = req.params.id;
+  const change = req.body
+  postDb.update(id, change)
+  .then(change => {
+    res.status(200).json({message: 'successfully updated the post'})
   })
-  .catch(error => {
-    console.log('Heres the error', error)
-    res.status(500).json({message: 'oh no'})
-  })
-});
-
-router.get("/:id", (req, res) => {
-  // do your magic!
-});
-
-router.delete("/:id", (req, res) => {
-  // do your magic!
-});
-
-router.put("/:id", (req, res) => {
-  // do your magic!
+  .catch((error) => {
+    console.log("Heres the error", error);
+    res.status(500).json({ message: "oh no" });
+  });
 });
 
 // custom middleware

@@ -19,12 +19,14 @@ router.post("/", validateUser, (req, res) => {
 
 // still not working
 router.post("/:id/posts", validateUserId, validatePost, (req, res) => {
+  console.log("herers the req.body", req.body);
   postDB
     .insert(req.body)
     .then((post) => {
       res.status(201).json(post);
     })
     .catch((error) => {
+      console.log("herers the req.body", req.body);
       console.log("heres the error", error);
       res.status(500).json({ message: "oh no" });
     });
@@ -125,7 +127,8 @@ function validateUser(req, res, next) {
 
 function validatePost(req, res, next) {
   const user = req.body;
-  if (!user.text || !user) {
+  // const id = req.params.id;
+  if (!user.text || !user.user_id) {
     res.status(400).json({ message: "missing user data" }).end();
   } else {
     next();
