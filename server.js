@@ -21,7 +21,7 @@ function logger() {
     console.log(
       `Request Method: ${req.method}, Request URL: ${
         req.url
-      }, Date: ${Date.getTime()}`
+      }, Date: ${new Date()}`
     );
     next();
   };
