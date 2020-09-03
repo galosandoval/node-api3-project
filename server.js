@@ -6,9 +6,9 @@ const postRouter = require('./posts/postRouter')
 
 server.use(helmet());
 server.use(express.json());
-server.use('/api/users', userRouter)
-server.use('/api/posts', postRouter)
-server.use(logger());
+server.use('/api/users', logger(), userRouter)
+server.use('/api/posts', logger(), postRouter)
+// server.use(logger());
 
 server.get("/", (req, res) => {
   res.send(`<h2>Let's write some middleware!</h2>`);
@@ -25,12 +25,6 @@ function logger() {
     );
     next();
   };
-}
-
-function validateUserId() {
-  return function (req, res, next){
-    
-  }
 }
 
 module.exports = server;
