@@ -19,16 +19,16 @@ router.post("/", validateUser, (req, res) => {
 });
 
 router.post("/:id/posts", validateUserId, validatePost, (req, res) => {
-  const post = req.body
-  postDB.insert(post)
-  .then(post => {
-    res.status(201).json(post)
-  })
-  .catch(error => {
-    console.log(error)
-    res.status(500).json({error: 'Error adding a post'})
-  })
-
+  const post = req.body;
+  postDB
+    .insert(post)
+    .then((post) => {
+      res.status(201).json(post);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ error: "Error adding a post" });
+    });
 });
 
 router.get("/", (req, res) => {
@@ -73,7 +73,7 @@ router.delete("/:id", validateUserId, (req, res) => {
   userDB
     .remove(id)
     .then((bye) => {
-      res.status(204).json({ message: "successfully deleted post" });
+      res.status(204)
     })
     .catch((error) => {
       console.log("hers the error", error);
@@ -117,13 +117,13 @@ function validateUserId(req, res, next) {
 
 function validateUser(req, res, next) {
   const user = req.body;
-  if (!user.name) {
+  console.log(req.body.name)
+  if (!user) {
     res.status(400).json({ error: "missing user name" }).end();
   }
-  if (typeof name !== "string") {
+  if (typeof user.name !== "string") {
     res.status(400).json({ error: "Name must be a string" });
   }
-  req.body = { name };
   next();
 }
 
@@ -136,8 +136,8 @@ function validatePost(req, res, next) {
   if (!req.body) {
     res.status(400).json({ message: "missing user body data" });
   }
-  req.body = {user_id, text}
-  next()
+  req.body = { user_id, text };
+  next();
 }
 
 module.exports = router;
